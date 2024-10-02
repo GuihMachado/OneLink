@@ -1,12 +1,16 @@
 {
   "name": "desktop-application-template",
   "version": "1.0.0",
+  "main": "app.js",
    "scripts": {
     "ng": "ng",
     "start": "ng serve",
-    "build": "ng build",
+    "build": "ng build --configuration production --base-href ./ ",
     "watch": "ng build --watch --configuration development",
-    "test": "ng test"
+    "test": "ng test",
+    "electron": "ng build --base-href ./ && electron .",
+    "electron-package": "electron-packager . --platform=win32 --overwrite --out=release --prune=true",
+    "electron-installer-win": "node installer/windows/createinstaller.js"
   },
   "private": true,
   "dependencies": {
@@ -67,6 +71,9 @@
     "karma-coverage": "~2.2.0",
     "karma-jasmine": "~5.1.0",
     "karma-jasmine-html-reporter": "~2.1.0",
+    "electron": "^29.2.0",
+    "electron-packager": "^17.1.2",
+    "electron-winstaller": "^5.3.1",
     "postcss": "^8.4.39",
     "tailwind-merge": "^2.2.0",
     "tailwindcss": "^3.4.4",

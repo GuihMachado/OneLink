@@ -1,3 +1,7 @@
+dist
+release
+.angular
+
 # Logs
 logs
 *.log

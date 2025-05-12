@@ -8,9 +8,8 @@
     "build": "ng build --configuration production --base-href ./ ",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
-    "electron": "ng build --base-href ./ && electron .",
-    "electron-package": "electron-packager . --platform=win32 --overwrite --out=release --prune=true",
-    "electron-installer-win": "node installer/windows/createinstaller.js"
+    "electron": "npm run build && npm run electron-post-build && electron dist/manager/browser",
+    "electron-package": "npm run build && npm run electron-post-build && electron-packager ./dist/manager/browser AGVConnect --platform=win32 --overwrite --out=release --prune=true"
   },
   "private": true,
   "dependencies": {

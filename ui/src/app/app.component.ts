@@ -1,15 +1,18 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterLink, RouterOutlet } from '@angular/router';
 import { HlmButtonDirective } from '@spartan-ng/ui-button-helm';
+import { RouterLink, RouterOutlet } from '@angular/router';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [CommonModule, RouterOutlet, HlmButtonDirective, RouterLink],
+  imports: [
+    CommonModule,
+    HlmButtonDirective,
+    RouterLink,
+    RouterOutlet
+  ],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'
 })
-export class AppComponent {
-  title = 'manufacturing-plan';
-}
+export class AppComponent { }

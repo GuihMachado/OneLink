@@ -25,8 +25,6 @@ function createWindow() {
             slashes: true
         })
     );
-    // Open the DevTools.
-    // mainWindow.webContents.openDevTools()
 
     mainWindow.on('closed', function () {
         mainWindow = null
@@ -35,6 +33,12 @@ function createWindow() {
     mainWindow.webContents.on('did-fail-load', async (event, errorCode, errorDescription) => {
         console.error(`Load failed: ${errorDescription} (Code: ${errorCode})`);
         await mainWindow.loadFile(path.join(__dirname, 'dist/application/browser/index.html'));
+    });
+
+    mainWindow.on('render-process-gone', (event, detailed) => {
+        if (detailed.reason === 'crashed') {
+            mainWindow.webContents.reload();
+        }
     });
 }
 

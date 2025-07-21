@@ -6,10 +6,12 @@
     "ng": "ng",
     "start": "ng serve",
     "build": "ng build --configuration production --base-href ./ ",
+    "build:web": "ng build --configuration production --base-href / --output-path dist/web",
+    "electron-post-build": "copyfiles package.json app.js preload.js dist/application/browser",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
-    "electron": "npm run build && npm run electron-post-build && electron dist/manager/browser",
-    "electron-package": "npm run build && npm run electron-post-build && electron-packager ./dist/manager/browser AGVConnect --platform=win32 --overwrite --out=release --prune=true"
+    "electron": "npm run build && npm run electron-post-build && electron dist/application/browser",
+    "electron-package": "npm run build && npm run electron-post-build && electron-packager ./dist/application/browser AGVConnect --platform=win32 --overwrite --out=release --prune=true"
   },
   "private": true,
   "dependencies": {
@@ -63,6 +65,7 @@
     "@angular/compiler-cli": "^18.0.0",
     "@spartan-ng/cli": "^0.0.1-alpha.360",
     "@types/jasmine": "~5.1.0",
+    "copyfiles": "^2.4.1",
     "autoprefixer": "^10.4.19",
     "jasmine-core": "~5.1.0",
     "karma": "~6.4.0",

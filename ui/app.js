@@ -1,4 +1,5 @@
-const { app, BrowserWindow } = require('electron')
+const { app, BrowserWindow, ipcMain, dialog } = require('electron')
+const fs = require('fs');
 
 handleSquirrelEvent();
 
@@ -11,7 +12,9 @@ function createWindow() {
     mainWindow = new BrowserWindow({
         show: false,
         webPreferences: {
-            nodeIntegration: true
+            preload: path.join(__dirname, 'preload.js'),
+            nodeIntegration: false,
+            contextIsolation: true
         }
     })
 
@@ -20,7 +23,7 @@ function createWindow() {
 
     mainWindow.loadURL(
         url.format({
-            pathname: path.join(__dirname, `dist/application/browser/index.html`),
+            pathname: path.join(__dirname, `index.html`),
             protocol: "file:",
             slashes: true
         })
@@ -32,7 +35,7 @@ function createWindow() {
     
     mainWindow.webContents.on('did-fail-load', async (event, errorCode, errorDescription) => {
         console.error(`Load failed: ${errorDescription} (Code: ${errorCode})`);
-        await mainWindow.loadFile(path.join(__dirname, 'dist/application/browser/index.html'));
+        await mainWindow.loadFile(path.join(__dirname, 'index.html'));
     });
 
     mainWindow.on('render-process-gone', (event, detailed) => {
@@ -50,6 +53,22 @@ app.on('window-all-closed', function () {
 
 app.on('activate', function () {
     if (mainWindow === null) createWindow()
+})
+
+ipcMain.on('download-blob', function (event, { blob, filename, extension }) {
+    const data = blob.replace(/^data:.+;base64,/, '');
+    const buffer = Buffer.from(data, 'base64');
+
+    dialog.showSaveDialog({
+        title: 'Save File',
+        defaultPath: `${filename}.${extension}`
+    }).then(({ filePath }) => {
+        if (filePath) {
+            fs.writeFile(filePath, buffer, (err) => {
+                if (err) throw err;
+            });
+        }
+    });
 })
 
 function handleSquirrelEvent () {

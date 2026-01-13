@@ -1,19 +1,17 @@
-import { Component, inject } from '@angular/core';
+import { Component } from '@angular/core';
 import { provideIcons } from '@ng-icons/core';
 import { lucideAlertTriangle, lucideFileUp, lucidePlus, lucideSearch } from '@ng-icons/lucide';
-import { HlmIconModule } from '@spartan-ng/ui-icon-helm';
-import { BrnSeparatorModule } from '@spartan-ng/ui-separator-brain';
-import { HlmSeparatorModule } from '@spartan-ng/ui-separator-helm';
-import { HlmButtonModule } from '@spartan-ng/ui-button-helm';
+import { HlmButtonImports } from '@spartan-ng/helm/button';
+import { HlmIconImports } from '@spartan-ng/helm/icon';
+import { HlmSeparatorImports } from '@spartan-ng/helm/separator';
 
 @Component({
     selector: 'app-home',
     standalone: true,
     imports: [
-        HlmIconModule,
-        BrnSeparatorModule,
-        HlmSeparatorModule,
-        HlmButtonModule,
+        HlmIconImports,
+        HlmSeparatorImports,
+        HlmButtonImports,
     ],
     providers: [
         provideIcons({ lucideSearch, lucidePlus, lucideFileUp, lucideAlertTriangle })

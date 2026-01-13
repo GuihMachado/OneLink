@@ -1,14 +1,14 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { HlmButtonDirective } from '@spartan-ng/ui-button-helm';
 import { RouterLink, RouterOutlet } from '@angular/router';
+import { HlmButtonImports } from '@spartan-ng/helm/button';
 
 @Component({
   selector: 'app-root',
   standalone: true,
   imports: [
     CommonModule,
-    HlmButtonDirective,
+    HlmButtonImports,
     RouterLink,
     RouterOutlet
   ],

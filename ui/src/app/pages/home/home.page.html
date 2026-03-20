@@ -1,20 +1,62 @@
-<div class="flex flex-col px-8 py-4 gap-4">
-    <div class="px-4">
-        <div class="flex w-full justify-between">
-            <h2 class="font-bold">Pagína inicial</h2>
-            <div class="flex gap-2">
-                <button hlmBtn variant="secondary" class="px-2 py-5" >
-                    <ng-icon hlm size="sm" name="lucideFileUp" />
-                    Upload
+<div class="bg-pink-300 w-full h-screen bg-linear-to-b from-pink-300 to-pink-500">
+    <div class="pt-15">
+        <img src="../../../assets/logo-renata.png" class="justify-self-center pt-10">
+        <span class="font-calibri font-semibold text-3xl flex justify-center pt-5">Renata Martho</span>
+        <span class="text-xs flex justify-center font-bold">Consultora Mary Kay</span>
+    
+        <div class="px-4 mt-30 space-y-4">
+            <div hlmButtonGroup class="w-full h-15">
+                <button hlmBtn class="w-7/8 flex justify-between h-full" (click)="redirectTo('instagram')">
+                    <ng-icon hlm name="lucideInstagram" class="justify-start"/>
+                    <span>Instagram</span>
+                    <div>
+    
+                    </div>
                 </button>
-                <button hlmBtn class="px-2 py-5" >
-                    <ng-icon hlm size="sm" name="lucidePlus" />
-                    Adicionar
+                <button hlmBtn class="w-1/8 h-full">
+                    <ng-icon hlm name="lucideMoreVertical" class="justify-start"/>
+                </button>
+            </div>
+    
+            <div hlmButtonGroup class="w-full h-15">
+                <button hlmBtn class="w-7/8 flex justify-between h-full" (click)="redirectTo('pix')">
+                    <ng-icon hlm name="lucideQrCode" class="justify-start"/>
+                    <span>Pix</span>
+                    <div>
+    
+                    </div>
+                </button>
+                <button hlmBtn class="w-1/8 h-full">
+                    <ng-icon hlm name="lucideMoreVertical" class="justify-start"/>
+                </button>
+            </div>
+    
+            <div hlmButtonGroup class="w-full h-15">
+                <button hlmBtn class="w-7/8 flex justify-between h-full" (click)="redirectTo('catalog')">
+                    <ng-icon hlm name="lucideAlbum" class="justify-start"/>
+                    <span>Catálogo</span>
+                    <div>
+    
+                    </div>
+                </button>
+                <button hlmBtn class="w-1/8 h-full">
+                    <ng-icon hlm name="lucideMoreVertical" class="justify-start"/>
                 </button>
             </div>
         </div>
-        <h4>Este é apenas o template inicial. Substitua com seu conteúdo.</h4>
+        <img src="../../../assets/mary-kay.png" class="justify-self-center pt-30 w-40">
     </div>
-
-    <hlm-separator/>
 </div>
+
+<ng-template #menu>
+  <hlm-dropdown-menu>
+    <hlm-dropdown-menu-label>My Account</hlm-dropdown-menu-label>
+    <hlm-dropdown-menu-separator />
+    <hlm-dropdown-menu-group>
+      <button hlmDropdownMenuItem>
+        Profile
+        <hlm-dropdown-menu-shortcut>⇧⌘P</hlm-dropdown-menu-shortcut>
+      </button>
+    </hlm-dropdown-menu-group>
+  </hlm-dropdown-menu>
+</ng-template>

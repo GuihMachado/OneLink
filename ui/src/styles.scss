@@ -14,18 +14,18 @@ body, html {
     padding: 0;
     height: 100%; 
     font-family: var(--font-sans), ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
-	// background: linear-gradient(to bottom, #f9a8d4, #ec4899);
-	// overscroll-behavior: none;
+	background: linear-gradient(to bottom, #f9a8d4, #ec4899);
+	overscroll-behavior: none;
 	overflow: hidden;
 }
 
-// html {
-// 	height: 100%;
-// 	background: linear-gradient(to bottom, #f9a8d4, #ec4899);
-// 	min-height: 100%;
-// 	background: transparent;
-//   	background-attachment: fixed;
-// }
+html {
+	height: 100%;
+	background-color: #ec4899 !important;
+	min-height: 100%;
+	background: transparent;
+  	background-attachment: fixed;
+}
 
 body {
   padding:
@@ -43,14 +43,14 @@ h4 { font-size: 1.00em; }
 h5 { font-size: 0.83em; }
 h6 { font-size: 0.67em; }
 
-// .bg-fixed-ios {
-//   position: fixed;
-//   inset: 0;
-//   z-index: -1;
+.bg-fixed-ios {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
 
-//   background: linear-gradient(to bottom, #f9a8d4, #ec4899);
-//   padding-bottom: env(safe-area-inset-bottom);
-// }
+  background: linear-gradient(to bottom, #f9a8d4, #ec4899);
+  padding-bottom: env(safe-area-inset-bottom);
+}
 
 :root {
 --font-sans: '';

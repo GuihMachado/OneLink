@@ -21,7 +21,11 @@ body, html {
 
 html {
 	height: 100%;
-	background-color: #ec4899 !important;
+	background: linear-gradient(
+		to bottom,
+		#f9a8d4 0%,
+		#ec4899 100%
+	) !important;
 	min-height: 100%;
 	background: transparent;
   	background-attachment: fixed;

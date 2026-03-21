@@ -16,6 +16,7 @@ body, html {
     font-family: var(--font-sans), ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
 	background: linear-gradient(to bottom, #f9a8d4, #ec4899);
 	overscroll-behavior: none;
+	overflow: hidden;
 }
 
 html {
@@ -23,6 +24,7 @@ html {
 	background: linear-gradient(to bottom, #f9a8d4, #ec4899);
 	min-height: 100%;
 	background: transparent;
+  	background-attachment: fixed;
 }
 
 body {

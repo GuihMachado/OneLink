@@ -19,18 +19,17 @@ body, html {
 }
 
 html {
-	height: 100%;
-	background: linear-gradient(to bottom, #f9a8d4, #ec4899);
-	min-height: 100%;
-	background: transparent;
+  height: 100%;
+  background: linear-gradient(to bottom, #f9a8d4, #ec4899);
+  background-attachment: fixed;
 }
 
 body {
-  padding:
-    env(safe-area-inset-top)
-    env(safe-area-inset-right)
-    env(safe-area-inset-bottom)
-    env(safe-area-inset-left);
+  min-height: 100%;
+  margin: 0;
+  padding: 0;
+  padding-top: env(safe-area-inset-top);
+  padding-bottom: env(safe-area-inset-bottom);
 }
 
 h1 { font-size: 2em; }

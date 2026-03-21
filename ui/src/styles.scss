@@ -34,6 +34,7 @@ body {
     env(safe-area-inset-bottom)
     env(safe-area-inset-left);
 	margin: 0;
+	padding-top: env(safe-area-inset-top);
 }
 
 h1 { font-size: 2em; }
@@ -44,12 +45,11 @@ h5 { font-size: 0.83em; }
 h6 { font-size: 0.67em; }
 
 .bg-fixed-ios {
-  position: fixed;
-  inset: 0;
-  z-index: -1;
-
-  background: linear-gradient(to bottom, #f9a8d4, #ec4899);
-  padding-bottom: env(safe-area-inset-bottom);
+  background: linear-gradient(
+    to bottom,
+    #f9a8d4 0%,
+    #ec4899 100%
+  );
 }
 
 :root {

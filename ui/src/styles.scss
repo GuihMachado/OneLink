@@ -9,37 +9,33 @@
 @import "@spartan-ng/brain/hlm-tailwind-preset.css";
 
 
-body, html {
-    margin: 0;
-    padding: 0;
-    height: 100%; 
-    font-family: var(--font-sans), ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
-	background: linear-gradient(to bottom, #f9a8d4, #ec4899);
-	overscroll-behavior: none;
-	overflow: hidden;
-}
+// body, html {
+//     margin: 0;
+//     padding: 0;
+//     height: 100%; 
+//     font-family: var(--font-sans), ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+// 	background: linear-gradient(to bottom, #f9a8d4, #ec4899);
+// 	overscroll-behavior: none;
+// 	overflow: hidden;
+// }
 
-html {
-	height: 100%;
-	background: linear-gradient(
-		to bottom,
-		#f9a8d4 0%,
-		#ec4899 100%
-	) !important;
-	min-height: 100%;
-	background: transparent;
-  	background-attachment: fixed;
-}
+// html {
+// 	height: 100%;
+// 	background-color: #ec4899 !important;
+// 	min-height: 100%;
+// 	background: transparent;
+//   	background-attachment: fixed;
+// }
 
-body {
-  padding:
-    env(safe-area-inset-top)
-    env(safe-area-inset-right)
-    env(safe-area-inset-bottom)
-    env(safe-area-inset-left);
-	margin: 0;
-	padding-top: env(safe-area-inset-top);
-}
+// body {
+//   padding:
+//     env(safe-area-inset-top)
+//     env(safe-area-inset-right)
+//     env(safe-area-inset-bottom)
+//     env(safe-area-inset-left);
+// 	margin: 0;
+// 	padding-top: env(safe-area-inset-top);
+// }
 
 h1 { font-size: 2em; }
 h2 { font-size: 1.5em; }
@@ -48,13 +44,13 @@ h4 { font-size: 1.00em; }
 h5 { font-size: 0.83em; }
 h6 { font-size: 0.67em; }
 
-.bg-fixed-ios {
-  background: linear-gradient(
-    to bottom,
-    #f9a8d4 0%,
-    #ec4899 100%
-  );
-}
+// .bg-fixed-ios {
+//   background: linear-gradient(
+//     to bottom,
+//     #f9a8d4 0%,
+//     #ec4899 100%
+//   );
+// }
 
 :root {
 --font-sans: '';
@@ -199,10 +195,11 @@ color-scheme: dark;
 }
 
 @layer base {
-* {
-@apply border-border outline-ring/50;
-}
-body {
-@apply bg-background text-foreground;
-}
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    /* Removemos o bg-background daqui */
+    @apply text-foreground;
+  }
 }

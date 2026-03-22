@@ -9,15 +9,14 @@
 @import "@spartan-ng/brain/hlm-tailwind-preset.css";
 
 
-// body, html {
-//     margin: 0;
-//     padding: 0;
-//     height: 100%; 
-//     font-family: var(--font-sans), ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
-// 	background: linear-gradient(to bottom, #f9a8d4, #ec4899);
-// 	overscroll-behavior: none;
-// 	overflow: hidden;
-// }
+body, html {
+  margin: 0;
+  padding: 0;
+  height: 100%; 
+  font-family: var(--font-sans), ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  overscroll-behavior: none;
+  overflow: hidden;
+}
 
 // html {
 // 	height: 100%;

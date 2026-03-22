@@ -44,6 +44,6 @@ export class HomePage {
         this.copiado = true;
         setTimeout(() => {
             this.copiado = false;
-        }, 1000);
+        }, 2000);
     }
 }

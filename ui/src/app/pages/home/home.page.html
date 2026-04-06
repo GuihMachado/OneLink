@@ -15,6 +15,16 @@
         </div>
 
         <div hlmButtonGroup class="w-full h-15">
+            <button hlmBtn mat-ripple class="w-full flex justify-between h-full" (click)="redirectTo('wpp-team')">
+                <ng-icon hlm name="lucideMessageCirclePlus" class="justify-start"/>
+                <span>Faça parte do meu time Mary Kay</span>
+                <div>
+
+                </div>
+            </button>
+        </div>
+
+        <div hlmButtonGroup class="w-full h-15">
             <button hlmBtn mat-ripple class="w-full flex justify-between h-full" [cdkCopyToClipboard]="chavePix" (cdkCopyToClipboardCopied)="onCopySuccess()">
                 <ng-icon hlm name="lucideQrCode" class="justify-start"/>
                 <span>{{ copiado ? 'Chave Pix Copiada!' : 'Copiar Chave Pix' }}</span>
@@ -27,7 +37,17 @@
         <div hlmButtonGroup class="w-full h-15">
             <button hlmBtn mat-ripple class="w-full flex justify-between h-full" (click)="redirectTo('catalog')">
                 <ng-icon hlm name="lucideAlbum" class="justify-start"/>
-                <span>Catálogo</span>
+                <span>Loja virtual</span>
+                <div>
+
+                </div>
+            </button>
+        </div>
+
+        <div hlmButtonGroup class="w-full h-15">
+            <button hlmBtn mat-ripple class="w-full flex justify-between h-full" (click)="redirectTo('wpp')">
+                <ng-icon hlm name="lucideMessageCircle" class="justify-start"/>
+                <span>Fale Comigo</span>
                 <div>
 
                 </div>

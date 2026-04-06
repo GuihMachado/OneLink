@@ -28,13 +28,11 @@ import { MatRippleModule } from '@angular/material/core';
     styleUrl: './home.page.scss'
 })
 export class HomePage {
-    protected chavePix: string = '00020101021126580014br.gov.bcb.pix...';
+    protected chavePix: string = '15997177434';
     protected copiado: boolean = false;
     protected redirectTo(to: string) {
         if (to === 'instagram') {
             window.open(`https://www.instagram.com/renatamartho/`, '_blank');
-        }else if (to === 'pix') {
-            window.open(`https://www.pix.com/`, '_blank');
         }else if (to === 'wpp-team') {
             window.open(`https://wa.me/5515997177434?text=Olá!+Gostaria+de+fazer+parte+do+seu+time`, '_blank');
         }else if (to === 'wpp') {

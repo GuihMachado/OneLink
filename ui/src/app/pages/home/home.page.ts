@@ -28,17 +28,14 @@ import { MatRippleModule } from '@angular/material/core';
     styleUrl: './home.page.scss'
 })
 export class HomePage {
-    protected chavePix: string = '15997177434';
+    protected chavePixVanessa: string = '15996114538';
+    protected chavePixDemerino: string = '48999696338';
     protected copiado: boolean = false;
     protected redirectTo(to: string) {
-        if (to === 'instagram') {
-            window.open(`https://www.instagram.com/renatamartho/`, '_blank');
-        }else if (to === 'wpp-team') {
-            window.open(`https://wa.me/5515997177434?text=Olá!+Gostaria+de+fazer+parte+do+seu+time`, '_blank');
-        }else if (to === 'wpp') {
-            window.open(`https://wa.me/5515997177434?text=Olá!`, '_blank');
-        }else{
-            window.open(`https://loja.marykay.com.br/minha-vitrine?slug=renata-martho-consultora-mary-kay&fbclid=PAY2xjawGx2TNleHRuA2FlbQIxMQABphjH077_ECt3pAZAMdfFA20ZhsrmXZCaLOPAv0uCI8hi-6SqpDsaBIzChw_aem_BgylQnxgkzR25asAM4Ownw`, '_blank');
+        if (to === 'wpp-vanessa') {
+            window.open(`https://wa.me/5515996114538?text=Olá!`, '_blank');
+        }else if (to === 'wpp-demerino') {
+            window.open(`https://wa.me/5548999696338?text=Olá!`, '_blank');
         }
     }
 

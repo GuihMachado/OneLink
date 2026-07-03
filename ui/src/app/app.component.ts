@@ -1,15 +1,12 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterLink, RouterOutlet } from '@angular/router';
-import { HlmButtonImports } from '@spartan-ng/helm/button';
+import { RouterOutlet } from '@angular/router';
 
 @Component({
   selector: 'app-root',
   standalone: true,
   imports: [
     CommonModule,
-    HlmButtonImports,
-    RouterLink,
     RouterOutlet
   ],
   templateUrl: './app.component.html',

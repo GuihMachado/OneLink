@@ -1,0 +1,84 @@
+<section class="min-h-dvh bg-black">
+    @if (state === 'loading') {
+        <div class="mx-auto flex min-h-dvh max-w-md items-center justify-center px-6 text-center text-white">
+            <span class="text-sm font-medium tracking-wide">Carregando página...</span>
+        </div>
+    }
+
+    @if (state === 'not-configured') {
+        <div class="mx-auto flex min-h-dvh max-w-md flex-col items-center justify-center gap-4 px-6 text-center text-white">
+            <ng-icon hlm name="lucideAlertTriangle" class="size-8" />
+            <h1 class="text-2xl font-semibold">Supabase não configurado</h1>
+            <p class="text-sm text-white/75">Preencha `environment.supabase.url` e `environment.supabase.anonKey` para carregar os clientes.</p>
+            <a routerLink="/admin/login" class="rounded-md bg-white px-4 py-2 text-sm font-semibold text-slate-950">Ir para o admin</a>
+        </div>
+    }
+
+    @if (state === 'missing') {
+        <div class="mx-auto flex min-h-dvh max-w-md flex-col items-center justify-center gap-3 px-6 text-center text-white">
+            <ng-icon hlm name="lucideAlertTriangle" class="size-8" />
+            <h1 class="text-2xl font-semibold">Cliente não encontrado</h1>
+            <p class="text-sm text-white/75">Confira se o endereço está correto ou se a página está ativa.</p>
+        </div>
+    }
+
+    @if (state === 'error') {
+        <div class="mx-auto flex min-h-dvh max-w-md flex-col items-center justify-center gap-3 px-6 text-center text-white">
+            <ng-icon hlm name="lucideAlertTriangle" class="size-8" />
+            <h1 class="text-2xl font-semibold">Não foi possível abrir</h1>
+            <p class="text-sm text-white/75">{{ errorMessage }}</p>
+        </div>
+    }
+
+    @if (state === 'ready') {
+        @if (client; as profile) {
+            <div
+                class="min-h-dvh bg-cover bg-center bg-no-repeat"
+                [style.background-color]="profile.theme.backgroundColor"
+                [style.background-image]="backgroundImage(profile)">
+                <div class="mx-auto flex min-h-dvh w-full max-w-md flex-col px-5 py-7" [style.color]="profile.theme.textColor">
+                    <header class="flex flex-col items-center text-center">
+                        @if (profile.avatarUrl) {
+                            <img [src]="profile.avatarUrl" [alt]="profile.name" class="h-40 w-40 rounded-full object-cover shadow-xl ring-2 ring-white/40">
+                        }
+
+                        <h1 class="mt-5 text-3xl font-semibold">{{ profile.name }}</h1>
+
+                        @if (profile.subtitle) {
+                            <p class="mt-1 text-sm font-semibold opacity-85">{{ profile.subtitle }}</p>
+                        }
+                    </header>
+
+                    <main class="mt-8 flex flex-1 flex-col gap-3">
+                        @for (link of profile.links; track link.id) {
+                            <button
+                                type="button"
+                                mat-ripple
+                                class="flex min-h-14 w-full items-center justify-between rounded-lg border px-4 text-sm font-semibold shadow-lg transition hover:scale-[1.01] focus:outline-none focus:ring-2 focus:ring-white/60"
+                                [style.background-color]="profile.theme.buttonBackgroundColor"
+                                [style.color]="profile.theme.buttonTextColor"
+                                [style.border-color]="profile.theme.buttonBorderColor"
+                                (click)="activateLink(link)">
+                                <ng-icon hlm [name]="iconFor(link)" class="size-5 shrink-0" />
+                                <span class="mx-3 min-w-0 flex-1 text-center leading-snug">
+                                    {{ copiedLinkId === link.id ? 'Copiado!' : link.title }}
+                                </span>
+                                <ng-icon hlm [name]="link.type === 'copy' ? 'lucideCopy' : 'lucideExternalLink'" class="size-4 shrink-0 opacity-70" />
+                            </button>
+                        } @empty {
+                            <div class="rounded-lg border border-white/25 bg-black/25 px-4 py-5 text-center text-sm">
+                                Nenhum link ativo no momento.
+                            </div>
+                        }
+                    </main>
+
+                    @if (profile.logoUrl) {
+                        <footer class="mt-8 flex justify-center">
+                            <img [src]="profile.logoUrl" [alt]="profile.name" class="max-h-16 max-w-44 object-contain">
+                        </footer>
+                    }
+                </div>
+            </div>
+        }
+    }
+</section>

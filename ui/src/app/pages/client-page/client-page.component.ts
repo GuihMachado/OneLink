@@ -10,6 +10,7 @@ import {
     lucideAlertTriangle,
     lucideCopy,
     lucideExternalLink,
+    lucideFacebook,
     lucideInstagram,
     lucideLink,
     lucideMessageCircle,
@@ -25,8 +26,10 @@ type PageState = 'loading' | 'ready' | 'missing' | 'not-configured' | 'error';
 const ICON_MAP: Record<string, string> = {
     instagram: 'lucideInstagram',
     whatsapp: 'lucideMessageCircle',
+    facebook: 'lucideFacebook',
     pix: 'lucideQrCode',
     loja: 'lucideAlbum',
+    catalogo: 'lucideAlbum',
     shop: 'lucideAlbum',
     copy: 'lucideCopy',
     link: 'lucideExternalLink'
@@ -47,6 +50,7 @@ const ICON_MAP: Record<string, string> = {
             lucideAlertTriangle,
             lucideCopy,
             lucideExternalLink,
+            lucideFacebook,
             lucideInstagram,
             lucideLink,
             lucideMessageCircle,

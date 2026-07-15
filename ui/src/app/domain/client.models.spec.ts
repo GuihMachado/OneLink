@@ -1,71 +1,33 @@
-import {
-    DEFAULT_CLIENT_THEME,
-    mapClientRecord,
-    mapLinkRecord,
-    normalizeSlug,
-    toClientPayload
-} from './client.models';
+import { DEFAULT_CLIENT_THEME, buildClientLinks, mapClientRecord, normalizeSlug, normalizeSocialUrl, normalizeUrl, toClientPayload, whatsappUrl } from './client.models';
 
 describe('client models', () => {
-    it('normalizes client slugs', () => {
-        expect(normalizeSlug(' Renata Martho Consultora ')).toBe('renata-martho-consultora');
-        expect(normalizeSlug('João & Maria')).toBe('joao-maria');
+    const record = {
+        id: '1', slug: 'renata-martho', name: 'Renata', last_name: 'Martho', instagram: '@renata',
+        whatsapp: '15997177434', pix_key: 'pix-123', facebook: null, store_url: 'loja.com', catalog_url: null,
+        avatar_url: 'https://img.test/avatar.jpg', background_url: null, theme: null, active: true
+    };
+
+    it('normalizes slugs with first and last name', () => {
+        expect(normalizeSlug(' João da Silva ')).toBe('joao-da-silva');
     });
 
-    it('maps client records with default theme values', () => {
-        const client = mapClientRecord({
-            id: 'client-id',
-            slug: 'renata-martho',
-            name: 'Renata Martho',
-            subtitle: null,
-            pix_key: null,
-            avatar_url: null,
-            logo_url: null,
-            background_url: null,
-            theme: {
-                textColor: '#eeeeee'
-            },
-            active: true
-        });
-
-        expect(client.theme.textColor).toBe('#eeeeee');
-        expect(client.theme.buttonBackgroundColor).toBe(DEFAULT_CLIENT_THEME.buttonBackgroundColor);
+    it('creates only buttons whose fields have values in the fixed order', () => {
+        const client = mapClientRecord(record);
+        expect(buildClientLinks(client).map((link) => link.id)).toEqual(['instagram', 'whatsapp', 'pix', 'store']);
     });
 
-    it('maps link records', () => {
-        const link = mapLinkRecord({
-            id: 'link-id',
-            client_id: 'client-id',
-            title: 'Instagram',
-            type: 'url',
-            value: 'https://example.com',
-            icon: null,
-            sort_order: 2,
-            active: true
-        });
-
-        expect(link.clientId).toBe('client-id');
-        expect(link.icon).toBe('');
-        expect(link.sortOrder).toBe(2);
+    it('normalizes social, regular and WhatsApp links', () => {
+        expect(normalizeSocialUrl('@renata', 'instagram.com')).toBe('https://instagram.com/renata');
+        expect(normalizeUrl('loja.com')).toBe('https://loja.com');
+        expect(whatsappUrl('(15) 99717-7434')).toBe('https://wa.me/5515997177434');
     });
 
-    it('creates client payloads using database field names', () => {
-        const payload = toClientPayload({
-            slug: ' Cliente Teste ',
-            name: ' Cliente Teste ',
-            subtitle: '',
-            pixKey: ' 123 ',
-            avatarUrl: '',
-            logoUrl: null,
-            backgroundUrl: null,
-            theme: DEFAULT_CLIENT_THEME,
-            active: true
-        });
-
-        expect(payload.slug).toBe('cliente-teste');
-        expect(payload.name).toBe('Cliente Teste');
-        expect(payload.subtitle).toBeNull();
-        expect(payload.pix_key).toBe('123');
-        expect(payload.avatar_url).toBeNull();
+    it('creates the fixed client payload and strips phone formatting', () => {
+        const client = mapClientRecord(record);
+        const payload = toClientPayload({ ...client, links: undefined } as never);
+        expect(payload.last_name).toBe('Martho');
+        expect(payload.whatsapp).toBe('15997177434');
+        expect(payload.avatar_url).toBe(record.avatar_url);
+        expect(client.theme).toEqual(DEFAULT_CLIENT_THEME);
     });
 });

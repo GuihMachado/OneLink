@@ -1,13 +1,9 @@
 import { Injectable } from '@angular/core';
 import {
     ClientInput,
-    ClientLinkInput,
-    ClientLinkRecord,
     ClientProfile,
     ClientRecord,
     mapClientRecord,
-    mapLinkRecord,
-    toClientLinkPayload,
     toClientPayload
 } from '../domain/client.models';
 import { AuthService } from './auth.service';
@@ -22,7 +18,7 @@ export class AdminClientService {
 
     async listClients(): Promise<ClientProfile[]> {
         const clients = await this.supabase.get<ClientRecord[]>(
-            '/clients?select=id,slug,name,subtitle,pix_key,avatar_url,logo_url,background_url,theme,active&order=name.asc',
+            '/clients?select=id,slug,name,last_name,instagram,whatsapp,pix_key,facebook,store_url,catalog_url,avatar_url,background_url,theme,active&order=name.asc',
             this.requireToken()
         );
 
@@ -31,22 +27,11 @@ export class AdminClientService {
 
     async getClient(id: string): Promise<ClientProfile | null> {
         const clients = await this.supabase.get<ClientRecord[]>(
-            `/clients?id=eq.${encodeURIComponent(id)}&select=id,slug,name,subtitle,pix_key,avatar_url,logo_url,background_url,theme,active&limit=1`,
+            `/clients?id=eq.${encodeURIComponent(id)}&select=id,slug,name,last_name,instagram,whatsapp,pix_key,facebook,store_url,catalog_url,avatar_url,background_url,theme,active&limit=1`,
             this.requireToken()
         );
 
-        const clientRecord = clients[0];
-
-        if (!clientRecord) {
-            return null;
-        }
-
-        const links = await this.supabase.get<ClientLinkRecord[]>(
-            `/client_links?client_id=eq.${encodeURIComponent(id)}&select=id,client_id,title,type,value,icon,sort_order,active&order=sort_order.asc`,
-            this.requireToken()
-        );
-
-        return mapClientRecord(clientRecord, links.map(mapLinkRecord));
+        return clients[0] ? mapClientRecord(clients[0]) : null;
     }
 
     async createClient(input: ClientInput): Promise<ClientProfile> {
@@ -67,32 +52,6 @@ export class AdminClientService {
         );
 
         return mapClientRecord(records[0]);
-    }
-
-    async saveLinks(clientId: string, links: ClientLinkInput[], removedLinkIds: string[]): Promise<void> {
-        const token = this.requireToken();
-
-        for (const link of links) {
-            const payload = toClientLinkPayload(clientId, link);
-
-            if (link.id) {
-                await this.supabase.patch<ClientLinkRecord[]>(
-                    `/client_links?id=eq.${encodeURIComponent(link.id)}`,
-                    payload,
-                    token
-                );
-            } else {
-                await this.supabase.post<ClientLinkRecord[]>('/client_links', payload, token);
-            }
-        }
-
-        if (removedLinkIds.length > 0) {
-            await this.supabase.patch<ClientLinkRecord[]>(
-                `/client_links?id=in.(${removedLinkIds.map((id) => encodeURIComponent(id)).join(',')})`,
-                { active: false },
-                token
-            );
-        }
     }
 
     private requireToken(): string {

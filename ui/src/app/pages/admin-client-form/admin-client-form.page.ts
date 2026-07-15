@@ -2,319 +2,128 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import {
-    ClientAssetKind,
-    ClientInput,
-    ClientLinkInput,
-    ClientLinkType,
-    ClientProfile,
-    ClientTheme,
-    DEFAULT_CLIENT_THEME,
-    normalizeSlug,
-    nullIfEmpty
-} from '../../domain/client.models';
+import { ClientAssetKind, ClientInput, ClientProfile, ClientTheme, DEFAULT_CLIENT_THEME, normalizeSlug, nullIfEmpty } from '../../domain/client.models';
 import { AdminClientService } from '../../services/admin-client.service';
 import { AssetUploadService } from '../../services/asset-upload.service';
 import { SupabaseConfigurationError } from '../../services/supabase-api.service';
 
 interface ClientDraft {
-    id: string | null;
-    name: string;
-    slug: string;
-    subtitle: string;
-    pixKey: string;
-    avatarUrl: string;
-    logoUrl: string;
-    backgroundUrl: string;
-    active: boolean;
-    theme: ClientTheme;
-}
-
-interface LinkDraft {
-    id: string | null;
-    title: string;
-    type: ClientLinkType;
-    value: string;
-    icon: string;
-    active: boolean;
+    id: string | null; name: string; lastName: string; slug: string; instagram: string;
+    whatsapp: string; pixKey: string; facebook: string; storeUrl: string; catalogUrl: string;
+    avatarUrl: string; backgroundUrl: string; active: boolean; theme: ClientTheme;
 }
 
 @Component({
-    selector: 'app-admin-client-form',
-    standalone: true,
-    imports: [
-        CommonModule,
-        FormsModule,
-        RouterLink
-    ],
-    templateUrl: './admin-client-form.page.html',
-    styleUrl: './admin-client-form.page.scss'
+    selector: 'app-admin-client-form', standalone: true,
+    imports: [CommonModule, FormsModule, RouterLink],
+    templateUrl: './admin-client-form.page.html', styleUrl: './admin-client-form.page.scss'
 })
 export class AdminClientFormPage implements OnInit {
     protected draft: ClientDraft = this.emptyDraft();
-    protected links: LinkDraft[] = [];
-    protected removedLinkIds: string[] = [];
-    protected loading = false;
-    protected saving = false;
-    protected errorMessage = '';
-    protected successMessage = '';
-    protected uploading: Record<ClientAssetKind, boolean> = {
-        avatar: false,
-        logo: false,
-        background: false
-    };
+    protected activeTab: 'data' | 'appearance' = 'data';
+    protected loading = false; protected saving = false; protected errorMessage = ''; protected successMessage = '';
+    protected uploading: Record<ClientAssetKind, boolean> = { avatar: false, background: false };
 
-    protected readonly iconOptions = [
-        { value: 'link', label: 'Link' },
-        { value: 'instagram', label: 'Instagram' },
-        { value: 'whatsapp', label: 'WhatsApp' },
-        { value: 'pix', label: 'Pix' },
-        { value: 'loja', label: 'Loja' },
-        { value: 'copy', label: 'Copiar' }
-    ];
-
-    constructor(
-        private readonly route: ActivatedRoute,
-        private readonly router: Router,
-        private readonly adminClients: AdminClientService,
-        private readonly assetUpload: AssetUploadService
-    ) { }
+    constructor(private readonly route: ActivatedRoute, private readonly router: Router,
+        private readonly adminClients: AdminClientService, private readonly assetUpload: AssetUploadService) {}
 
     ngOnInit(): void {
         const id = this.route.snapshot.paramMap.get('id');
-
-        if (id) {
-            void this.loadClient(id);
-        } else {
-            this.addLink();
-        }
+        if (id) void this.loadClient(id);
     }
 
-    protected get isNew(): boolean {
-        return this.draft.id === null;
-    }
+    protected get isNew(): boolean { return this.draft.id === null; }
 
     protected generateSlug(): void {
-        this.draft.slug = normalizeSlug(this.draft.name || this.draft.slug);
+        this.draft.slug = normalizeSlug(`${this.draft.name} ${this.draft.lastName}`);
     }
 
-    protected addLink(type: ClientLinkType = 'url'): void {
-        this.links.push({
-            id: null,
-            title: '',
-            type,
-            value: '',
-            icon: type === 'copy' ? 'copy' : 'link',
-            active: true
-        });
-    }
-
-    protected removeLink(index: number): void {
-        const [removed] = this.links.splice(index, 1);
-
-        if (removed?.id) {
-            this.removedLinkIds.push(removed.id);
-        }
-    }
-
-    protected moveLink(index: number, direction: -1 | 1): void {
-        const targetIndex = index + direction;
-
-        if (targetIndex < 0 || targetIndex >= this.links.length) {
-            return;
-        }
-
-        const current = this.links[index];
-        this.links[index] = this.links[targetIndex];
-        this.links[targetIndex] = current;
+    protected formatWhatsapp(): void {
+        const digits = this.draft.whatsapp.replace(/\D/g, '').replace(/^55(?=\d{10,11}$)/, '').slice(0, 11);
+        if (digits.length <= 2) this.draft.whatsapp = digits;
+        else this.draft.whatsapp = `(${digits.slice(0, 2)}) ${digits.slice(2)}`;
     }
 
     protected async save(): Promise<void> {
-        this.errorMessage = '';
-        this.successMessage = '';
-
+        this.errorMessage = ''; this.successMessage = '';
         const validationError = this.validate();
-
-        if (validationError) {
-            this.errorMessage = validationError;
-            return;
-        }
-
+        if (validationError) { this.errorMessage = validationError; return; }
         this.saving = true;
-
         try {
             const wasNew = this.isNew;
-            const input = this.toClientInput();
-            const savedClient = wasNew
-                ? await this.adminClients.createClient(input)
-                : await this.adminClients.updateClient(this.draft.id ?? '', input);
-
-            this.draft.id = savedClient.id;
-
-            await this.adminClients.saveLinks(savedClient.id, this.toLinkInputs(), this.removedLinkIds);
-            const refreshedClient = await this.adminClients.getClient(savedClient.id);
-
-            if (refreshedClient) {
-                this.applyClient(refreshedClient);
-            }
-
-            this.removedLinkIds = [];
+            const saved = wasNew
+                ? await this.adminClients.createClient(this.toClientInput())
+                : await this.adminClients.updateClient(this.draft.id ?? '', this.toClientInput());
+            this.applyClient(saved);
             this.successMessage = 'Cliente salvo e publicado.';
-
-            if (wasNew) {
-                await this.router.navigate(['/admin/clients', savedClient.id], { replaceUrl: true });
-            }
+            if (wasNew) await this.router.navigate(['/admin/clients', saved.id], { replaceUrl: true });
         } catch (error) {
-            if (error instanceof SupabaseConfigurationError) {
-                this.errorMessage = 'Configure o Supabase nos environments antes de salvar.';
-            } else {
-                this.errorMessage = error instanceof Error ? error.message : 'Não foi possível salvar o cliente.';
-            }
-        } finally {
-            this.saving = false;
-        }
+            this.errorMessage = error instanceof SupabaseConfigurationError
+                ? 'Configure o Supabase nos environments antes de salvar.'
+                : error instanceof Error ? error.message : 'Não foi possível salvar o cliente.';
+        } finally { this.saving = false; }
     }
 
     protected async onFileSelected(kind: ClientAssetKind, event: Event): Promise<void> {
-        const input = event.target as HTMLInputElement;
-        const file = input.files?.[0];
-        input.value = '';
-
-        if (!file) {
-            return;
-        }
-
-        this.errorMessage = '';
-        this.uploading[kind] = true;
-
+        const input = event.target as HTMLInputElement; const file = input.files?.[0]; input.value = '';
+        if (!file) return;
+        this.errorMessage = ''; this.uploading[kind] = true;
         try {
-            const url = await this.assetUpload.uploadClientAsset(this.draft.slug, kind, file);
-            this.assignAssetUrl(kind, url);
+            const slug = this.draft.slug || normalizeSlug(`${this.draft.name} ${this.draft.lastName}`) || 'cliente';
+            const url = await this.assetUpload.uploadClientAsset(slug, kind, file);
+            if (kind === 'avatar') this.draft.avatarUrl = url; else this.draft.backgroundUrl = url;
         } catch (error) {
             this.errorMessage = error instanceof Error ? error.message : 'Não foi possível enviar a imagem.';
-        } finally {
-            this.uploading[kind] = false;
-        }
+        } finally { this.uploading[kind] = false; }
     }
 
     private async loadClient(id: string): Promise<void> {
         this.loading = true;
-        this.errorMessage = '';
-
         try {
             const client = await this.adminClients.getClient(id);
-
-            if (!client) {
-                this.errorMessage = 'Cliente não encontrado.';
-                return;
-            }
-
-            this.applyClient(client);
+            if (client) this.applyClient(client); else this.errorMessage = 'Cliente não encontrado.';
         } catch (error) {
-            if (error instanceof SupabaseConfigurationError) {
-                this.errorMessage = 'Configure o Supabase nos environments antes de editar clientes.';
-            } else {
-                this.errorMessage = error instanceof Error ? error.message : 'Não foi possível carregar o cliente.';
-            }
-        } finally {
-            this.loading = false;
-        }
+            this.errorMessage = error instanceof SupabaseConfigurationError ? 'Configure o Supabase antes de editar clientes.'
+                : error instanceof Error ? error.message : 'Não foi possível carregar o cliente.';
+        } finally { this.loading = false; }
     }
 
     private applyClient(client: ClientProfile): void {
         this.draft = {
-            id: client.id,
-            name: client.name,
-            slug: client.slug,
-            subtitle: client.subtitle ?? '',
-            pixKey: client.pixKey ?? '',
-            avatarUrl: client.avatarUrl ?? '',
-            logoUrl: client.logoUrl ?? '',
-            backgroundUrl: client.backgroundUrl ?? '',
-            active: client.active,
+            id: client.id, name: client.name, lastName: client.lastName, slug: client.slug,
+            instagram: client.instagram ?? '', whatsapp: client.whatsapp ?? '', pixKey: client.pixKey ?? '',
+            facebook: client.facebook ?? '', storeUrl: client.storeUrl ?? '', catalogUrl: client.catalogUrl ?? '',
+            avatarUrl: client.avatarUrl ?? '', backgroundUrl: client.backgroundUrl ?? '', active: client.active,
             theme: { ...client.theme }
         };
-
-        this.links = client.links.map((link) => ({
-            id: link.id,
-            title: link.title,
-            type: link.type,
-            value: link.value,
-            icon: link.icon,
-            active: link.active
-        }));
+        this.formatWhatsapp();
     }
 
     private validate(): string | null {
-        this.draft.slug = normalizeSlug(this.draft.slug || this.draft.name);
-
-        if (!this.draft.name.trim()) {
-            return 'Informe o nome do cliente.';
-        }
-
-        if (!this.draft.slug) {
-            return 'Informe um slug válido.';
-        }
-
-        const invalidLink = this.links.find((link) => link.active && (!link.title.trim() || !link.value.trim()));
-
-        if (invalidLink) {
-            return 'Links ativos precisam de título e valor.';
-        }
-
+        this.draft.slug = normalizeSlug(this.draft.slug || `${this.draft.name} ${this.draft.lastName}`);
+        if (!this.draft.name.trim()) return 'Informe o nome do cliente.';
+        if (!this.draft.lastName.trim()) return 'Informe o sobrenome do cliente.';
+        if (!this.draft.avatarUrl.trim()) return 'Envie a foto de perfil do cliente.';
+        if (!this.draft.slug) return 'Informe um slug válido.';
+        const phone = this.draft.whatsapp.replace(/\D/g, '').replace(/^55(?=\d{10,11}$)/, '');
+        if (phone && !/^\d{10,11}$/.test(phone)) return 'Informe o WhatsApp com DDD e 10 ou 11 dígitos.';
         return null;
     }
 
     private toClientInput(): ClientInput {
         return {
-            slug: this.draft.slug,
-            name: this.draft.name,
-            subtitle: nullIfEmpty(this.draft.subtitle),
-            pixKey: nullIfEmpty(this.draft.pixKey),
-            avatarUrl: nullIfEmpty(this.draft.avatarUrl),
-            logoUrl: nullIfEmpty(this.draft.logoUrl),
-            backgroundUrl: nullIfEmpty(this.draft.backgroundUrl),
-            theme: { ...this.draft.theme },
-            active: this.draft.active
+            slug: this.draft.slug, name: this.draft.name, lastName: this.draft.lastName,
+            instagram: nullIfEmpty(this.draft.instagram), whatsapp: nullIfEmpty(this.draft.whatsapp),
+            pixKey: nullIfEmpty(this.draft.pixKey), facebook: nullIfEmpty(this.draft.facebook),
+            storeUrl: nullIfEmpty(this.draft.storeUrl), catalogUrl: nullIfEmpty(this.draft.catalogUrl),
+            avatarUrl: this.draft.avatarUrl, backgroundUrl: nullIfEmpty(this.draft.backgroundUrl),
+            active: this.draft.active, theme: { ...this.draft.theme }
         };
-    }
-
-    private toLinkInputs(): ClientLinkInput[] {
-        return this.links
-            .filter((link) => link.title.trim() || link.value.trim())
-            .map((link, index) => ({
-                id: link.id,
-                title: link.title,
-                type: link.type,
-                value: link.value,
-                icon: link.icon,
-                sortOrder: index,
-                active: link.active
-            }));
-    }
-
-    private assignAssetUrl(kind: ClientAssetKind, url: string): void {
-        if (kind === 'avatar') {
-            this.draft.avatarUrl = url;
-        } else if (kind === 'logo') {
-            this.draft.logoUrl = url;
-        } else {
-            this.draft.backgroundUrl = url;
-        }
     }
 
     private emptyDraft(): ClientDraft {
-        return {
-            id: null,
-            name: '',
-            slug: '',
-            subtitle: '',
-            pixKey: '',
-            avatarUrl: '',
-            logoUrl: '',
-            backgroundUrl: '',
-            active: true,
-            theme: { ...DEFAULT_CLIENT_THEME }
-        };
+        return { id: null, name: '', lastName: '', slug: '', instagram: '', whatsapp: '', pixKey: '',
+            facebook: '', storeUrl: '', catalogUrl: '', avatarUrl: '', backgroundUrl: '', active: true,
+            theme: { ...DEFAULT_CLIENT_THEME } };
     }
 }

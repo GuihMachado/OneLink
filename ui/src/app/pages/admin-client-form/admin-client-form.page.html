@@ -1,179 +1,51 @@
 <main class="min-h-dvh bg-slate-100 text-slate-950">
     <header class="border-b border-slate-200 bg-white">
-        <div class="mx-auto flex w-full max-w-5xl items-center justify-between px-4 py-4">
-            <div>
-                <a routerLink="/admin/clients" class="text-sm font-semibold text-slate-500">Clientes</a>
-                <h1 class="text-2xl font-semibold">{{ isNew ? 'Novo cliente' : 'Editar cliente' }}</h1>
-            </div>
-
+        <div class="mx-auto flex w-full max-w-5xl items-center justify-between gap-3 px-4 py-4">
+            <div><a routerLink="/admin/clients" class="text-sm font-semibold text-slate-500">Clientes</a><h1 class="text-2xl font-semibold">{{ isNew ? 'Novo cliente' : 'Editar cliente' }}</h1></div>
             <div class="flex items-center gap-2">
-                @if (draft.slug) {
-                    <a [routerLink]="['/', draft.slug]" target="_blank" class="rounded-md border border-slate-300 px-3 py-2 text-sm font-semibold">Abrir página</a>
-                }
-                <button type="button" class="rounded-md bg-slate-950 px-4 py-2 text-sm font-semibold text-white" [disabled]="saving" (click)="save()">
-                    {{ saving ? 'Salvando...' : 'Salvar' }}
-                </button>
+                @if (draft.slug) { <a [routerLink]="['/', draft.slug]" target="_blank" class="rounded-md border border-slate-300 px-3 py-2 text-sm font-semibold">Abrir página</a> }
+                <button type="button" class="rounded-md bg-slate-950 px-4 py-2 text-sm font-semibold text-white disabled:opacity-60" [disabled]="saving" (click)="save()">{{ saving ? 'Salvando...' : 'Salvar' }}</button>
             </div>
         </div>
     </header>
-
     <section class="mx-auto grid w-full max-w-5xl gap-5 px-4 py-6">
-        @if (loading) {
-            <p class="text-sm text-slate-600">Carregando cliente...</p>
-        }
-
-        @if (errorMessage) {
-            <div class="rounded-md border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">{{ errorMessage }}</div>
-        }
-
-        @if (successMessage) {
-            <div class="rounded-md border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-700">{{ successMessage }}</div>
-        }
-
+        @if (loading) { <p class="text-sm text-slate-600">Carregando cliente...</p> }
+        @if (errorMessage) { <div class="rounded-md border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">{{ errorMessage }}</div> }
+        @if (successMessage) { <div class="rounded-md border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-700">{{ successMessage }}</div> }
         @if (!loading) {
-            <form class="grid gap-5" (ngSubmit)="save()">
-                <section class="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
-                    <div class="mb-4 flex items-center justify-between gap-3">
-                        <h2 class="text-lg font-semibold">Dados do cliente</h2>
-                        <label class="flex items-center gap-2 text-sm font-semibold text-slate-700">
-                            <input type="checkbox" name="active" class="size-4" [(ngModel)]="draft.active">
-                            Ativo
-                        </label>
-                    </div>
-
-                    <div class="grid gap-4 md:grid-cols-2">
-                        <label class="block space-y-2">
-                            <span class="text-sm font-medium text-slate-700">Nome</span>
-                            <input name="name" class="h-11 w-full rounded-md border border-slate-300 px-3 text-sm outline-none focus:ring-2 focus:ring-slate-400" [(ngModel)]="draft.name" (blur)="generateSlug()">
-                        </label>
-
-                        <label class="block space-y-2">
-                            <span class="text-sm font-medium text-slate-700">Slug</span>
-                            <div class="flex gap-2">
-                                <input name="slug" class="h-11 min-w-0 flex-1 rounded-md border border-slate-300 px-3 text-sm outline-none focus:ring-2 focus:ring-slate-400" [(ngModel)]="draft.slug" (blur)="generateSlug()">
-                                <button type="button" class="rounded-md border border-slate-300 px-3 text-sm font-semibold" (click)="generateSlug()">Gerar</button>
-                            </div>
-                        </label>
-
-                        <label class="block space-y-2">
-                            <span class="text-sm font-medium text-slate-700">Subtítulo</span>
-                            <input name="subtitle" class="h-11 w-full rounded-md border border-slate-300 px-3 text-sm outline-none focus:ring-2 focus:ring-slate-400" [(ngModel)]="draft.subtitle">
-                        </label>
-
-                        <label class="block space-y-2">
-                            <span class="text-sm font-medium text-slate-700">Chave Pix opcional</span>
-                            <input name="pixKey" class="h-11 w-full rounded-md border border-slate-300 px-3 text-sm outline-none focus:ring-2 focus:ring-slate-400" [(ngModel)]="draft.pixKey">
-                        </label>
-                    </div>
-                </section>
-
-                <section class="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
-                    <h2 class="text-lg font-semibold">Imagens</h2>
-                    <div class="mt-4 grid gap-4 md:grid-cols-3">
-                        <label class="block space-y-2">
-                            <span class="text-sm font-medium text-slate-700">Foto/avatar</span>
-                            <input type="file" accept="image/*" class="block w-full text-sm" [disabled]="uploading.avatar" (change)="onFileSelected('avatar', $event)">
-                            <input name="avatarUrl" class="h-10 w-full rounded-md border border-slate-300 px-3 text-xs outline-none focus:ring-2 focus:ring-slate-400" placeholder="URL da foto" [(ngModel)]="draft.avatarUrl">
-                        </label>
-
-                        <label class="block space-y-2">
-                            <span class="text-sm font-medium text-slate-700">Logo</span>
-                            <input type="file" accept="image/*" class="block w-full text-sm" [disabled]="uploading.logo" (change)="onFileSelected('logo', $event)">
-                            <input name="logoUrl" class="h-10 w-full rounded-md border border-slate-300 px-3 text-xs outline-none focus:ring-2 focus:ring-slate-400" placeholder="URL do logo" [(ngModel)]="draft.logoUrl">
-                        </label>
-
-                        <label class="block space-y-2">
-                            <span class="text-sm font-medium text-slate-700">Background</span>
-                            <input type="file" accept="image/*" class="block w-full text-sm" [disabled]="uploading.background" (change)="onFileSelected('background', $event)">
-                            <input name="backgroundUrl" class="h-10 w-full rounded-md border border-slate-300 px-3 text-xs outline-none focus:ring-2 focus:ring-slate-400" placeholder="URL do background" [(ngModel)]="draft.backgroundUrl">
-                        </label>
-                    </div>
-                </section>
-
-                <section class="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
-                    <h2 class="text-lg font-semibold">Tema simples</h2>
-                    <div class="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
-                        <label class="block space-y-2">
-                            <span class="text-sm font-medium text-slate-700">Fundo</span>
-                            <input type="color" name="backgroundColor" class="h-11 w-full rounded-md border border-slate-300 p-1" [(ngModel)]="draft.theme.backgroundColor">
-                        </label>
-                        <label class="block space-y-2">
-                            <span class="text-sm font-medium text-slate-700">Texto</span>
-                            <input type="color" name="textColor" class="h-11 w-full rounded-md border border-slate-300 p-1" [(ngModel)]="draft.theme.textColor">
-                        </label>
-                        <label class="block space-y-2">
-                            <span class="text-sm font-medium text-slate-700">Botão</span>
-                            <input type="color" name="buttonBackgroundColor" class="h-11 w-full rounded-md border border-slate-300 p-1" [(ngModel)]="draft.theme.buttonBackgroundColor">
-                        </label>
-                        <label class="block space-y-2">
-                            <span class="text-sm font-medium text-slate-700">Texto botão</span>
-                            <input type="color" name="buttonTextColor" class="h-11 w-full rounded-md border border-slate-300 p-1" [(ngModel)]="draft.theme.buttonTextColor">
-                        </label>
-                        <label class="block space-y-2">
-                            <span class="text-sm font-medium text-slate-700">Borda botão</span>
-                            <input name="buttonBorderColor" class="h-11 w-full rounded-md border border-slate-300 px-2 text-xs outline-none focus:ring-2 focus:ring-slate-400" [(ngModel)]="draft.theme.buttonBorderColor">
-                        </label>
-                    </div>
-                </section>
-
-                <section class="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
-                    <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                        <h2 class="text-lg font-semibold">Links</h2>
-                        <div class="flex gap-2">
-                            <button type="button" class="rounded-md border border-slate-300 px-3 py-2 text-sm font-semibold" (click)="addLink('copy')">Adicionar copiar</button>
-                            <button type="button" class="rounded-md bg-slate-950 px-3 py-2 text-sm font-semibold text-white" (click)="addLink('url')">Adicionar URL</button>
+            <div class="flex border-b border-slate-300" role="tablist">
+                <button type="button" class="border-b-2 px-4 py-3 text-sm font-semibold" [class.border-slate-950]="activeTab === 'data'" [class.border-transparent]="activeTab !== 'data'" (click)="activeTab = 'data'">Dados do cliente</button>
+                <button type="button" class="border-b-2 px-4 py-3 text-sm font-semibold" [class.border-slate-950]="activeTab === 'appearance'" [class.border-transparent]="activeTab !== 'appearance'" (click)="activeTab = 'appearance'">Aparência</button>
+            </div>
+            <form (ngSubmit)="save()">
+                @if (activeTab === 'data') {
+                    <section class="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
+                        <div class="mb-5 flex items-center justify-between"><h2 class="text-lg font-semibold">Informações e canais</h2><label class="flex items-center gap-2 text-sm font-semibold"><input type="checkbox" name="active" class="size-4" [(ngModel)]="draft.active"> Ativo</label></div>
+                        <div class="grid gap-4 md:grid-cols-2">
+                            <label class="space-y-2"><span class="text-sm font-medium">Nome *</span><input name="name" required class="h-11 w-full rounded-md border border-slate-300 px-3" [(ngModel)]="draft.name" (blur)="generateSlug()"></label>
+                            <label class="space-y-2"><span class="text-sm font-medium">Sobrenome *</span><input name="lastName" required class="h-11 w-full rounded-md border border-slate-300 px-3" [(ngModel)]="draft.lastName" (blur)="generateSlug()"></label>
+                            <label class="space-y-2 md:col-span-2"><span class="text-sm font-medium">Slug *</span><div class="flex gap-2"><input name="slug" required class="h-11 min-w-0 flex-1 rounded-md border border-slate-300 px-3" [(ngModel)]="draft.slug"><button type="button" class="rounded-md border border-slate-300 px-3 text-sm font-semibold" (click)="generateSlug()">Gerar</button></div></label>
+                            <label class="space-y-2 md:col-span-2"><span class="text-sm font-medium">Foto de perfil *</span><input type="file" accept="image/*" class="block w-full text-sm" [disabled]="uploading.avatar" (change)="onFileSelected('avatar', $event)"><input name="avatarUrl" class="h-10 w-full rounded-md border border-slate-300 px-3 text-xs" placeholder="URL da foto" [(ngModel)]="draft.avatarUrl"></label>
+                            <label class="space-y-2"><span class="text-sm font-medium">Instagram</span><input name="instagram" class="h-11 w-full rounded-md border border-slate-300 px-3" placeholder="@usuario ou URL" [(ngModel)]="draft.instagram"></label>
+                            <label class="space-y-2"><span class="text-sm font-medium">WhatsApp</span><input name="whatsapp" inputmode="numeric" class="h-11 w-full rounded-md border border-slate-300 px-3" placeholder="(XX) XXXXXXXXX" [(ngModel)]="draft.whatsapp" (input)="formatWhatsapp()"></label>
+                            <label class="space-y-2"><span class="text-sm font-medium">Chave Pix</span><input name="pixKey" class="h-11 w-full rounded-md border border-slate-300 px-3" [(ngModel)]="draft.pixKey"></label>
+                            <label class="space-y-2"><span class="text-sm font-medium">Facebook</span><input name="facebook" class="h-11 w-full rounded-md border border-slate-300 px-3" placeholder="perfil ou URL" [(ngModel)]="draft.facebook"></label>
+                            <label class="space-y-2"><span class="text-sm font-medium">Link da loja virtual</span><input name="storeUrl" class="h-11 w-full rounded-md border border-slate-300 px-3" placeholder="https://..." [(ngModel)]="draft.storeUrl"></label>
+                            <label class="space-y-2"><span class="text-sm font-medium">Link do catálogo</span><input name="catalogUrl" class="h-11 w-full rounded-md border border-slate-300 px-3" placeholder="https://..." [(ngModel)]="draft.catalogUrl"></label>
                         </div>
-                    </div>
-
-                    <div class="mt-4 grid gap-3">
-                        @for (link of links; track $index; let index = $index) {
-                            <article class="rounded-md border border-slate-200 bg-slate-50 p-3">
-                                <div class="grid gap-3 lg:grid-cols-[1fr_120px_1.4fr_120px_auto] lg:items-end">
-                                    <label class="block space-y-2">
-                                        <span class="text-sm font-medium text-slate-700">Título</span>
-                                        <input name="link-title-{{ index }}" class="h-10 w-full rounded-md border border-slate-300 bg-white px-3 text-sm outline-none focus:ring-2 focus:ring-slate-400" [(ngModel)]="link.title">
-                                    </label>
-
-                                    <label class="block space-y-2">
-                                        <span class="text-sm font-medium text-slate-700">Tipo</span>
-                                        <select name="link-type-{{ index }}" class="h-10 w-full rounded-md border border-slate-300 bg-white px-2 text-sm outline-none focus:ring-2 focus:ring-slate-400" [(ngModel)]="link.type">
-                                            <option value="url">URL</option>
-                                            <option value="copy">Copiar</option>
-                                        </select>
-                                    </label>
-
-                                    <label class="block space-y-2">
-                                        <span class="text-sm font-medium text-slate-700">Valor</span>
-                                        <input name="link-value-{{ index }}" class="h-10 w-full rounded-md border border-slate-300 bg-white px-3 text-sm outline-none focus:ring-2 focus:ring-slate-400" [placeholder]="link.type === 'copy' ? 'Texto para copiar' : 'https://...'" [(ngModel)]="link.value">
-                                    </label>
-
-                                    <label class="block space-y-2">
-                                        <span class="text-sm font-medium text-slate-700">Ícone</span>
-                                        <select name="link-icon-{{ index }}" class="h-10 w-full rounded-md border border-slate-300 bg-white px-2 text-sm outline-none focus:ring-2 focus:ring-slate-400" [(ngModel)]="link.icon">
-                                            @for (icon of iconOptions; track icon.value) {
-                                                <option [value]="icon.value">{{ icon.label }}</option>
-                                            }
-                                        </select>
-                                    </label>
-
-                                    <div class="flex items-center justify-end gap-2">
-                                        <label class="flex items-center gap-2 text-sm font-semibold text-slate-700">
-                                            <input type="checkbox" name="link-active-{{ index }}" class="size-4" [(ngModel)]="link.active">
-                                            Ativo
-                                        </label>
-                                        <button type="button" class="rounded-md border border-slate-300 px-2 py-2 text-sm font-semibold" [disabled]="index === 0" (click)="moveLink(index, -1)">↑</button>
-                                        <button type="button" class="rounded-md border border-slate-300 px-2 py-2 text-sm font-semibold" [disabled]="index === links.length - 1" (click)="moveLink(index, 1)">↓</button>
-                                        <button type="button" class="rounded-md border border-red-200 px-2 py-2 text-sm font-semibold text-red-700" (click)="removeLink(index)">Remover</button>
-                                    </div>
-                                </div>
-                            </article>
-                        } @empty {
-                            <div class="rounded-md border border-dashed border-slate-300 px-4 py-8 text-center text-sm text-slate-500">
-                                Nenhum link cadastrado.
-                            </div>
-                        }
-                    </div>
-                </section>
+                    </section>
+                } @else {
+                    <section class="grid gap-5 rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
+                        <div><h2 class="text-lg font-semibold">Background</h2><div class="mt-4 grid gap-2"><input type="file" accept="image/*" class="block w-full text-sm" [disabled]="uploading.background" (change)="onFileSelected('background', $event)"><input name="backgroundUrl" class="h-10 w-full rounded-md border border-slate-300 px-3 text-xs" placeholder="URL do background" [(ngModel)]="draft.backgroundUrl"></div></div>
+                        <div><h2 class="text-lg font-semibold">Cores</h2><div class="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
+                            <label class="space-y-2"><span class="text-sm font-medium">Fundo</span><input type="color" name="backgroundColor" class="h-11 w-full rounded-md border p-1" [(ngModel)]="draft.theme.backgroundColor"></label>
+                            <label class="space-y-2"><span class="text-sm font-medium">Texto</span><input type="color" name="textColor" class="h-11 w-full rounded-md border p-1" [(ngModel)]="draft.theme.textColor"></label>
+                            <label class="space-y-2"><span class="text-sm font-medium">Botão</span><input type="color" name="buttonBackgroundColor" class="h-11 w-full rounded-md border p-1" [(ngModel)]="draft.theme.buttonBackgroundColor"></label>
+                            <label class="space-y-2"><span class="text-sm font-medium">Texto do botão</span><input type="color" name="buttonTextColor" class="h-11 w-full rounded-md border p-1" [(ngModel)]="draft.theme.buttonTextColor"></label>
+                            <label class="space-y-2"><span class="text-sm font-medium">Borda</span><input name="buttonBorderColor" class="h-11 w-full rounded-md border px-2 text-xs" [(ngModel)]="draft.theme.buttonBorderColor"></label>
+                        </div></div>
+                    </section>
+                }
             </form>
         }
     </section>

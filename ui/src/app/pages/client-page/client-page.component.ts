@@ -17,7 +17,9 @@ import {
     lucideQrCode
 } from '@ng-icons/lucide';
 import { HlmIconImports } from '@spartan-ng/helm/icon';
+import { DEFAULT_GLOBAL_APPEARANCE, GlobalAppearance, appearanceBackgroundImage } from '../../domain/appearance.models';
 import { ClientLink, ClientProfile } from '../../domain/client.models';
+import { AppearanceService } from '../../services/appearance.service';
 import { PublicClientService } from '../../services/public-client.service';
 import { SupabaseConfigurationError } from '../../services/supabase-api.service';
 
@@ -63,6 +65,7 @@ const ICON_MAP: Record<string, string> = {
 export class ClientPageComponent implements OnInit {
     protected state: PageState = 'loading';
     protected client: ClientProfile | null = null;
+    protected appearance: GlobalAppearance = { ...DEFAULT_GLOBAL_APPEARANCE };
     protected copiedLinkId: string | null = null;
     protected errorMessage = '';
 
@@ -71,6 +74,7 @@ export class ClientPageComponent implements OnInit {
     constructor(
         private readonly route: ActivatedRoute,
         private readonly publicClients: PublicClientService,
+        private readonly appearances: AppearanceService,
         private readonly clipboard: Clipboard
     ) { }
 
@@ -109,12 +113,12 @@ export class ClientPageComponent implements OnInit {
         return 'lucideLink';
     }
 
-    protected backgroundImage(profile: ClientProfile): string {
-        if (!profile.backgroundUrl) {
-            return 'none';
-        }
+    protected get backgroundImage(): string {
+        return appearanceBackgroundImage(this.appearance);
+    }
 
-        return `linear-gradient(rgba(0,0,0,0.32), rgba(0,0,0,0.42)), url("${profile.backgroundUrl}")`;
+    protected get backgroundPosition(): string {
+        return `${this.appearance.backgroundPositionX}% ${this.appearance.backgroundPositionY}%`;
     }
 
     private async loadClient(slug: string): Promise<void> {
@@ -123,7 +127,10 @@ export class ClientPageComponent implements OnInit {
         this.errorMessage = '';
 
         try {
-            const client = await this.publicClients.getBySlug(slug);
+            const [client, appearance] = await Promise.all([
+                this.publicClients.getBySlug(slug),
+                this.appearances.getPublicAppearance()
+            ]);
 
             if (!client) {
                 this.state = 'missing';
@@ -131,6 +138,7 @@ export class ClientPageComponent implements OnInit {
             }
 
             this.client = client;
+            this.appearance = appearance;
             this.state = 'ready';
         } catch (error) {
             if (error instanceof SupabaseConfigurationError) {

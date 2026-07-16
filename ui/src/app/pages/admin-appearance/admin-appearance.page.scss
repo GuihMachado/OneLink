@@ -1,0 +1,4 @@
+:host { display: block; }
+.appearance-preview { background-repeat: no-repeat; touch-action: none; user-select: none; }
+.appearance-preview.is-draggable { cursor: grab; }
+.appearance-preview.is-dragging { cursor: grabbing; }

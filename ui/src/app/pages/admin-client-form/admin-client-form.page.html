@@ -36,9 +36,8 @@
                     </section>
                 } @else {
                     <section class="grid gap-5 rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
-                        <div><h2 class="text-lg font-semibold">Background</h2><div class="mt-4 grid gap-2"><input type="file" accept="image/*" class="block w-full text-sm" [disabled]="uploading.background" (change)="onFileSelected('background', $event)"><input name="backgroundUrl" class="h-10 w-full rounded-md border border-slate-300 px-3 text-xs" placeholder="URL do background" [(ngModel)]="draft.backgroundUrl"></div></div>
-                        <div><h2 class="text-lg font-semibold">Cores</h2><div class="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
-                            <label class="space-y-2"><span class="text-sm font-medium">Fundo</span><input type="color" name="backgroundColor" class="h-11 w-full rounded-md border p-1" [(ngModel)]="draft.theme.backgroundColor"></label>
+                        <div class="rounded-md border border-blue-200 bg-blue-50 px-4 py-3 text-sm text-blue-800">O fundo é configurado uma única vez na tela <a routerLink="/admin/appearance" class="font-semibold underline">Aparência global</a>.</div>
+                        <div><h2 class="text-lg font-semibold">Cores do conteúdo</h2><div class="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
                             <label class="space-y-2"><span class="text-sm font-medium">Texto</span><input type="color" name="textColor" class="h-11 w-full rounded-md border p-1" [(ngModel)]="draft.theme.textColor"></label>
                             <label class="space-y-2"><span class="text-sm font-medium">Botão</span><input type="color" name="buttonBackgroundColor" class="h-11 w-full rounded-md border p-1" [(ngModel)]="draft.theme.buttonBackgroundColor"></label>
                             <label class="space-y-2"><span class="text-sm font-medium">Texto do botão</span><input type="color" name="buttonTextColor" class="h-11 w-full rounded-md border p-1" [(ngModel)]="draft.theme.buttonTextColor"></label>

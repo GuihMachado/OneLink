@@ -33,9 +33,11 @@
     @if (state === 'ready') {
         @if (client; as profile) {
             <div
-                class="min-h-dvh bg-cover bg-center bg-no-repeat"
-                [style.background-color]="profile.theme.backgroundColor"
-                [style.background-image]="backgroundImage(profile)">
+                class="min-h-dvh bg-no-repeat"
+                [style.background-color]="appearance.backgroundColor"
+                [style.background-image]="backgroundImage"
+                [style.background-position]="backgroundPosition"
+                [style.background-size]="appearance.backgroundSize">
                 <div class="mx-auto flex min-h-dvh w-full max-w-md flex-col px-5 py-7" [style.color]="profile.theme.textColor">
                     <header class="flex flex-col items-center text-center">
                         @if (profile.avatarUrl) {

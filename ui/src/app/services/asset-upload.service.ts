@@ -29,6 +29,15 @@ export class AssetUploadService {
         return this.supabase.getPublicObjectUrl(this.supabase.bucketName, path);
     }
 
+    async uploadGlobalBackground(file: File): Promise<string> {
+        const token = this.auth.getAccessToken();
+        if (!token) throw new Error('Faça login novamente para enviar imagens.');
+
+        const path = `global/background-${Date.now()}.${this.extensionFor(file)}`;
+        await this.supabase.uploadObject(this.supabase.bucketName, path, file, token);
+        return this.supabase.getPublicObjectUrl(this.supabase.bucketName, path);
+    }
+
     private extensionFor(file: File): string {
         const nameExtension = file.name.split('.').pop()?.toLowerCase();
 

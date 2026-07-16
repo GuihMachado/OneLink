@@ -23,6 +23,11 @@ export const routes: Routes = [
         loadComponent: () => import('./pages/admin-client-form/admin-client-form.page').then((module) => module.AdminClientFormPage)
     },
     {
+        path: 'admin/appearance',
+        canActivate: [adminAuthGuard],
+        loadComponent: () => import('./pages/admin-appearance/admin-appearance.page').then((module) => module.AdminAppearancePage)
+    },
+    {
         path: 'admin/clients/:id',
         canActivate: [adminAuthGuard],
         loadComponent: () => import('./pages/admin-client-form/admin-client-form.page').then((module) => module.AdminClientFormPage)
